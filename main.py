@@ -4,6 +4,7 @@ import json
 import paho.mqtt.client as paho
 import debugdraw as draw
 import threading
+import rasterizer as rast
 
 broker="192.168.0.32"
 port=1883
@@ -11,13 +12,17 @@ port=1883
 #Set lines for rastarization
 #ptsUpper = funcs.setPointsRelative(0, 0, 0.5, 0.5, 1, 0.25)
 
-#zigzag test pattern
+#test zigzag pattern
 ptsUpper = funcs.setPointsRelative(0, 0,
-                                   0.25, 1,
+                                   0.125, 1,
+                                   0.25, 0,
+                                   0.375, 1,
                                    0.5, 0,
-                                   0.75, 1,
+                                   0.625, 1,
+                                   0.75, 0,
+                                   0.875, 1,
                                    1, 0)
-dirsUpper = funcs.pointsToDirections(ptsUpper)
+
 
 if __name__ == '__main__':
     #Dispatch debug draw thread
@@ -27,7 +32,7 @@ if __name__ == '__main__':
     #generate image pixels
     pixels = imfuncs.generateTestPixelPattern()
     data = (funcs.generateJSON(imfuncs.getSubPanels(pixels),
-                         [0, 0, 0, 0, 0, 0],
+                         [2, 2, 2, 2, 2, 2],
                          [False, False, False, False, False, False],
                          [False, False, False, False, False, False]))
 

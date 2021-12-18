@@ -18,17 +18,8 @@ def generateJSON(data: [], rot: [], mirr: [], zigzag: []):
 def clamp(x):
   return max(0, min(x, 255))
 
-def pointsToDirections(vecs: [ds.Vector]):
-    #TODO: replace with assert
-    if len(vecs) < 2:
-        raise Exception("Supplied less than two vectors, lines cannot be built")
-
-    dirs = []
-    i = 0
-    while i < len(vecs) - 1:
-        dirs.append(vecs[i+1] - vecs[i])
-        i += 1
-    return dirs
+def clampTuple(x: tuple):
+  return tuple([clamp(val) for val in x])
 
 #point order in x1, y2, x2, y2...
 def setPointsAbsolute(*argv):
@@ -43,17 +34,17 @@ def setPointsAbsolute(*argv):
         if i == 0:
             tmp.x = 0
         elif i is len(argv) - 2:
-            tmp.x = conf._MatrixSizeX
+            tmp.x = conf._MatrixSizeX - 1
         i += 2
 
         if tmp.x < 0:
             tmp.x = 0
         if tmp.y < 0:
             tmp.y = 0
-        if tmp.x > conf._MatrixSizeX:
-            tmp.x = conf._MatrixSizeX
-        if tmp.y > conf._MatrixSizeY:
-            tmp.y = conf._MatrixSizeY
+        if tmp.x > conf._MatrixSizeX - 1:
+            tmp.x = conf._MatrixSizeX - 1
+        if tmp.y > conf._MatrixSizeY - 1:
+            tmp.y = conf._MatrixSizeY - 1
 
         points.append(tmp)
     return points
@@ -63,6 +54,9 @@ def setPointsRelative(*argv):
     points = []
     i = 0
     while i < len(argv):
+
+        minX = 1 / conf._MatrixSizeX
+        minY = 1 / conf._MatrixSizeY
 
         tmp = ds.Vector()
         tmp.x = argv[i]
@@ -78,10 +72,10 @@ def setPointsRelative(*argv):
             tmp.x = 0
         if tmp.y < 0:
             tmp.y = 0
-        if tmp.x > 1:
-            tmp.x = 1
-        if tmp.y > 1:
-            tmp.y = 1
+        if tmp.x > 1 - minX:
+            tmp.x = 1 - minX
+        if tmp.y > 1 - minY:
+            tmp.y = 1 - minY
 
         scalingVector = ds.Vector(conf._MatrixSizeX, conf._MatrixSizeY)
         tmp *= scalingVector
