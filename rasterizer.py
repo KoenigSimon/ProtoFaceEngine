@@ -2,6 +2,25 @@ import datastructures as ds
 import imagefunctions as imag
 import config as conf
 
+matrixX, matrixY = conf._MatrixSizeX, conf._MatrixSizeY
+targetcolor = (0, 255, 255)
+_myPixelsMatrix = imag.generatePixels()
+pxmax = len(_myPixelsMatrix)
+
+
+def bresenhamToPixelMatrix(pixels: [(float, float)]):
+    fullPixelMatrix = imag.generatePixels()
+    counter = 0
+    for x in range(matrixX):
+        for y in range(matrixY):
+            if counter < len(pixels):
+                if int(pixels[counter][0]) == x:
+                    if int(pixels[counter][1]) == y:
+                        fullPixelMatrix[ x * matrixY + y ] = targetcolor
+                        counter = counter + 1
+
+    return fullPixelMatrix
+
 #Bresenham-Algorythm for rendering lines
 def bresenham(vecs: [ds.Vector]):
     #pixels filled with (x, y)
@@ -33,11 +52,6 @@ def bresenham(vecs: [ds.Vector]):
     return pixels
 
 ############################################## Xiaolin Wu ##############################################
-
-matrixX, matrixY = conf._MatrixSizeX, conf._MatrixSizeY
-targetcolor = (0, 255, 255)
-_myPixelsMatrix = imag.generatePixels()
-pxmax = len(_myPixelsMatrix)
 
 def plot(x, y, intensity: float, color: (int, int, int)):
     index = int(matrixY * x + y)

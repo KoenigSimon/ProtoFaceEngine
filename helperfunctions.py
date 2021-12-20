@@ -5,7 +5,7 @@ def generateJSON(data: [], rot: [], mirr: [], zigzag: []):
     message = {}
     message['brightnessFactor'] = 0.1
     message['panels'] = []
-    print(data)
+    #print(data)
     for i in range(len(data)):
         panel = {}
         panel["rot"] = rot[i]
