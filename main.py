@@ -1,69 +1,57 @@
+import globals
 import helperfunctions as funcs
+import imagefunctions
 import imagefunctions as imfuncs
 import json
 import paho.mqtt.client as paho
 import debugdraw as draw
 import threading
-import rasterizer as rast
+import time
+import config
 
 broker="192.168.0.32"
 port=1883
 
-#Set lines for rastarization
-#ptsUpper = funcs.setPointsRelative(0, 0, 0.5, 0.5, 1, 0.25)
-
-#test zigzag pattern
-#ptsUpper = funcs.setPointsRelative(0, 0,
-#                                   0.125, 1,
-#                                   0.25, 0,
-#                                   0.375, 1,
-#                                   0.5, 0,
-#                                   0.625, 1,
-#                                   0.75, 0,
-#                                   0.875, 1,
-#                                   1, 0)
-
-ptsUpper = funcs.setPointsRelative(0, 0,
-                                   0.25, 1,
-                                   0.5, 0,
-                                   0.75, 1,
-                                   1, 0)
-
-#returns only active pixels
-linePixels = rast.bresenham(ptsUpper)
-linePixelColors = rast.bresenhamToPixelMatrix(linePixels)
-
-#returns all pixels
-linePixelsAA = rast.rasterizeXailinWuAlt(ptsUpper)
-
-if __name__ == '__main__':
-    #Dispatch debug draw thread
-    th = threading.Thread(target=draw.drawDebugWindow)
-    th.start()
-
-    for pix in linePixels:
-        print(pix, end=" ")
-    print("")
-    for pix in linePixelColors:
-        print(pix, end=" ")
-
-    #generate image pixels
-    pixels = imfuncs.generateTestPixelPattern()
-    data = (funcs.generateJSON(imfuncs.getSubPanels(linePixelColors),
-                             [1, 1, 1, 1, 1, 1],
-                             [True, True, True, True, True, True],
-                             [False, False, False, False, False, False]))
-
-    #Sending
+def updateDisplay():
+    #MQTT config
     mqClient = paho.Client("FaceDataProvider")  # create client object
     mqClient.connect(broker, port)  # establish connection
 
-    ret = mqClient.publish("dev/faceImage", json.dumps(data))
+    while not globals.threadAbort:
+        pixels = globals.finalPixelMatrixAA if config._UseAntiAlising else globals.finalPixelMatrix
 
-    #join threads and disable hardware
-    th.join()
+        data = (funcs.generateJSON(imfuncs.getSubPanels(pixels),
+                                 [1, 1, 1, 1, 1, 1],
+                                 [True, True, True, True, True, True],
+                                 [False, False, False, False, False, False]))
+        mqClient.publish("dev/faceImage", json.dumps(data))
+        time.sleep(1 / config._TargetUpdatesPerSecond)
+
+
+    #flush display pixels
     data = (funcs.generateJSON(imfuncs.getSubPanels(imfuncs.generatePixels()),
                                [0, 0, 0, 0, 0, 0],
                                [False, False, False, False, False, False],
                                [False, False, False, False, False, False]))
     mqClient.publish("dev/faceImage", json.dumps(data))
+    #wait for safe thread exit
+    time.sleep(0.5)
+    return
+
+if __name__ == '__main__':
+    globals.initialize()
+
+    #Dispatch debug draw thread
+    debugDrawThread = threading.Thread(target=draw.drawDebugWindow)
+    debugDrawThread.start()
+
+    #Dispatch display updating thread
+    dispUpdateThread = threading.Thread(target=updateDisplay)
+    dispUpdateThread.start()
+
+    #join threads and disable hardware
+    debugDrawThread.join()
+    dispUpdateThread.join()
+
+
+

@@ -8,7 +8,7 @@ _myPixelsMatrix = imag.generatePixels()
 pxmax = len(_myPixelsMatrix)
 
 
-def bresenhamToPixelMatrix(pixels: [(float, float)]):
+def bresenhamToFullPixelMatrix(pixels: [(float, float)]):
     fullPixelMatrix = imag.generatePixels()
     counter = 0
     for x in range(matrixX):
@@ -61,7 +61,10 @@ def plot(x, y, intensity: float, color: (int, int, int)):
     _myPixelsMatrix[index] = tuple([round(x * intensity) for x in color])
     return
 
-def rasterizeXailinWuAlt(vecs: [ds.Vector]):
+def rasterizeXailinWu(vecs: [ds.Vector]):
+
+    global _myPixelsMatrix
+    _myPixelsMatrix = imag.generatePixels()
 
     for i in range(len(vecs) - 1):
         vec1 = tuple(vecs[i].toArray())
