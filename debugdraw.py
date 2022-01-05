@@ -2,6 +2,7 @@ import pygame
 import pygame.key as key
 from pygame.locals import QUIT, K_DOWN, K_UP,K_LEFT, K_RIGHT
 from time import sleep
+import time
 import numpy
 
 import config
@@ -18,10 +19,14 @@ def drawDebugWindow():
     TextRawView = myfont.render('Raw View', False, 'white')
     textRastView = myfont.render('Rasterized View', False, 'white')
 
+
     matX, matY = config._MatrixSizeX, config._MatrixSizeY
 
     dynval1 = 0.0
     dynval2 = 0.5
+
+    clock = pygame.time.Clock()
+    pps = 0
 
     while not globals.threadAbort:
 
@@ -30,6 +35,12 @@ def drawDebugWindow():
         for event in pygame.event.get():
             if event.type == QUIT:
                 globals.threadAbort = True
+
+        clock.tick()
+        TextFPS = myfont.render('FPS: ' + str(clock.get_fps()), False, 'white')
+        if not globals.packTime == 0:
+            pps = 1.0 / globals.packTime
+        TextPackTime = myfont.render('Json pack: ' + str(pps) + "/s", False, 'white')
 
         ##################################### Test Logic ####################################
 
@@ -90,11 +101,12 @@ def drawDebugWindow():
                 else:
                     pygame.draw.rect(screen, (10, 10, 10), (pos[0], pos[1], 9, 9))
 
-
         screen.blit(TextRawView, (0,0))
+        screen.blit(TextFPS, (400, 0))
         screen.blit(textRastView, (0, 120))
+        screen.blit(TextPackTime, (340, 120))
         #pygame.draw.rect(screen, (0, 100, 255), (50, 50, 162, 100), 3)  # width = 3
         #pygame.draw.rect(screen, (0, 100, 255), (50, 50, 162, 100), 3)  # width = 3
-        sleep(0.05)
+        sleep(1.0 / config._TargetDebugFPS)
         pygame.display.flip()
     pygame.quit()

@@ -4,5 +4,6 @@ _MatrixSizeY = 8
 _PanelSizeX = 8
 _PanelSizeY = 8
 
-_TargetUpdatesPerSecond = 1
+_TargetDebugFPS = 30
+_TargetUpdatesPerSecond = 20
 _UseAntiAlising = True

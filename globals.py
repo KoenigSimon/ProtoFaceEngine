@@ -4,6 +4,8 @@ global threadAbort
 global finalPixelMatrix
 global finalPixelMatrixAA
 
+global packTime
+
 def initialize():
     global threadAbort
     threadAbort = False
@@ -13,3 +15,6 @@ def initialize():
 
     global finalPixelMatrixAA
     finalPixelMatrixAA = imagefunctions.generatePixels()
+
+    global packTime
+    packTime = 0
