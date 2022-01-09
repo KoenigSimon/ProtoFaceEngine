@@ -43,7 +43,7 @@ def updateDisplayMQTT():
     return
 
 def updateDisplaySerial():
-    ser = serial.Serial('COM9', 500000, timeout=0.5)
+    ser = serial.Serial('COM9', 1500000, timeout=0.5)
     while not globals.threadAbort:
         startTime = time.process_time_ns()
         pixels = globals.finalPixelMatrixAA if config._UseAntiAlising else globals.finalPixelMatrix

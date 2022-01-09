@@ -5,5 +5,6 @@ _PanelSizeX = 8
 _PanelSizeY = 8
 
 _TargetDebugFPS = 30
-_TargetUpdatesPerSecond = 20
-_UseAntiAlising = True
+_TargetUpdatesPerSecond = 30
+_UseAntiAlising = False
+_CompressDisplayStream = True

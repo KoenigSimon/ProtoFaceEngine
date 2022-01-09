@@ -12,9 +12,13 @@ def getSubPanels(pixels: []):
         subPanel = []
         for x in range(panelSizeX):
             for y in range(panelSizeY):
-                subPanel.append(pixels[(i * panelPixelCount) + ((x * 8) + (y))])
+                subPanel.append(pixels[(i * panelPixelCount) + ((x * panelSizeX) + (y))])
 
-        convPanel = convertTile(subPanel)
+        if conf._CompressDisplayStream:
+            convPanel = convertTileCompress(subPanel)
+        else:
+            convPanel = convertTile(subPanel)
+
         subpanels.append(convPanel)
     return subpanels
 
@@ -22,6 +26,15 @@ def convertTile(pixels: []):
     result = []
     for p in pixels:
         result.append("0x{0:02x}{1:02x}{2:02x}".format(funcs.clamp(p[0]), funcs.clamp(p[1]), funcs.clamp(p[2])))
+    return result
+
+def convertTileCompress(pixels: []):
+    result = []
+    for p in pixels:
+        if p == (0, 0, 0):
+            result.append("f")
+        else:
+            result.append("0x{0:02x}{1:02x}{2:02x}".format(funcs.clamp(p[0]), funcs.clamp(p[1]), funcs.clamp(p[2])))
     return result
 
 def generatePixels():
