@@ -51,9 +51,8 @@ def drawDebugWindow():
                                                0.75, 1,
                                                1, 0)
 
-        rastLines = rast.bresenham(testLinesRaw)
-        globals.finalPixelMatrix = rast.bresenhamToFullPixelMatrix(rastLines)
-        globals.finalPixelMatrixAA = rast.rasterizeXailinWu(testLinesRaw)
+        globals.finalPixelMatrix = rast.skLineRast(testLinesRaw)
+        globals.finalPixelMatrixAA = rast.skLineRastAA(testLinesRaw)
 
         #get input to modify lines
         keys = key.get_pressed()
@@ -94,12 +93,16 @@ def drawDebugWindow():
                 pos = numpy.add([x * 10, y * 10], offset)
                 color = globals.finalPixelMatrixAA[x * matY + y]
                 color2 = globals.finalPixelMatrix[x * matY + y]
-                #if color2 != (0, 0, 0):
-                #    pygame.draw.rect(screen, color2, (pos[0], pos[1], 9, 9))
-                if color != (0, 0, 0):
-                    pygame.draw.rect(screen, color, (pos[0], pos[1], 9, 9))
+                if config._UseAntiAlising:
+                    if color != (0, 0, 0):
+                        pygame.draw.rect(screen, color, (pos[0], pos[1], 9, 9))
+                    else:
+                        pygame.draw.rect(screen, (15, 15, 15), (pos[0], pos[1], 9, 9))
                 else:
-                    pygame.draw.rect(screen, (10, 10, 10), (pos[0], pos[1], 9, 9))
+                    if color2 != (0, 0, 0):
+                        pygame.draw.rect(screen, color2, (pos[0], pos[1], 9, 9))
+                    else:
+                        pygame.draw.rect(screen, (15, 15, 15), (pos[0], pos[1], 9, 9))
 
         screen.blit(TextRawView, (0,0))
         screen.blit(TextFPS, (400, 0))

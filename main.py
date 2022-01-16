@@ -66,6 +66,7 @@ def updateDisplaySerial():
     ser.write(json.dumps(data).encode())
     time.sleep(0.5)
     ser.flushOutput()
+    ser.close()
 
     return
 

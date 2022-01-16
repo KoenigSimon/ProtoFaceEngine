@@ -79,5 +79,9 @@ def setPointsRelative(*argv):
         scalingVector = ds.Vector(conf._MatrixSizeX, conf._MatrixSizeY)
         tmp *= scalingVector
 
+        #convert to int bc dealing only with full pixels
+        tmp.x = round(tmp.x)
+        tmp.y = round(tmp.y)
+
         points.append(tmp)
     return points
